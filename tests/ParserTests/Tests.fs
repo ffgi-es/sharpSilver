@@ -11,7 +11,7 @@ open FsUnit.Xunit
 open SharpSilver.AST
 open SharpSilver.Parser
 
-let generateProgram (name:string) (result:int) =
+let generateIntegerReturn (name:string) (result:int) =
     [
         $"{name} => INT"
         "=============="
@@ -20,7 +20,7 @@ let generateProgram (name:string) (result:int) =
     |> String.concat Environment.NewLine
 
 let testParsing name result property =
-    generateProgram name result
+    generateIntegerReturn name result
     |> parseFromString
     |> property
 
@@ -42,8 +42,10 @@ let ``Can parse a string`` () =
 
 [<Property>]
 let ``Should parse integer in return statement`` (a:int) =
-    testParsing "main" a (fun result -> result.Body = ReturnValue a)
+    fun result -> result.Body = ReturnValue a
+    |> testParsing "main" a
 
 [<Property(Arbitrary=[|typeof<functionName>|])>]
 let ``Should parse function name`` (a:string) =
-    testParsing a 2 (fun result -> result.Signature.Name = a)
+    fun result -> result.Signature.Name = a
+    |> testParsing a 2
