@@ -1,6 +1,7 @@
 module Tests
 
 open System
+open System.Text.RegularExpressions
 open Xunit
 
 open FsCheck
@@ -10,29 +11,39 @@ open FsUnit.Xunit
 open SharpSilver.AST
 open SharpSilver.Parser
 
+let generateProgram (name:string) (result:int) =
+    [
+        $"{name} => INT"
+        "=============="
+        $"{name} => {result}."
+    ]
+    |> String.concat Environment.NewLine
+
+let testParsing name result property =
+    generateProgram name result
+    |> parseFromString
+    |> property
+
+type functionName =
+    static member Name() =
+        let regex = new Regex("^[a-z][A-z0-9]*$")
+        Arb.Default.String()
+        |> Arb.filter (fun name -> 
+            not(String.IsNullOrEmpty(name)) &&
+            regex.Match(name).Success)
+
 [<Fact>]
 let ``Can parse a string`` () =
-    let input =
-        [
-            "main => INT"
-            "==========="
-            "main => 2."
-        ]
-        |> String.concat Environment.NewLine
-    let result = parseFromString input
-    result.Signature.Name |> should equal "main"
-    result.Signature.Parameters |> should haveLength 0
-    result.Signature.ReturnType |> should equal "INT"
-    result.Body |> should equal (ReturnValue 2)
+    testParsing "main" 2 (fun result ->
+        result.Signature.Name |> should equal "main"
+        result.Signature.Parameters |> should haveLength 0
+        result.Signature.ReturnType |> should equal "INT"
+        result.Body |> should equal (ReturnValue 2))
 
 [<Property>]
 let ``Should parse integer in return statement`` (a:int) =
-    let input =
-        [
-            "main => INT"
-            "==========="
-            $"main => {a}."
-        ]
-        |> String.concat Environment.NewLine
-    let result = parseFromString input
-    result.Body = ReturnValue a
+    testParsing "main" a (fun result -> result.Body = ReturnValue a)
+
+[<Property(Arbitrary=[|typeof<functionName>|])>]
+let ``Should parse function name`` (a:string) =
+    testParsing a 2 (fun result -> result.Signature.Name = a)
