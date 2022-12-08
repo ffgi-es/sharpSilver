@@ -24,9 +24,19 @@ let testParsing name result property =
     |> parseFromString
     |> property
 
+let testSuccessfulParsing name result property =
+    generateIntegerReturn name result
+    |> parseFromString
+    |> function
+        | Success result -> property result
+        | Failure error ->
+            printf "Error produced:\n%s" error
+            false
+
+
 type functionName =
     static member Name() =
-        let regex = new Regex("^[a-z][A-z0-9]*$")
+        let regex = new Regex("^[a-z][a-z0-9]*$")
         Arb.Default.String()
         |> Arb.filter (fun name -> 
             not(String.IsNullOrEmpty(name)) &&
@@ -34,18 +44,22 @@ type functionName =
 
 [<Fact>]
 let ``Can parse a string`` () =
-    testParsing "main" 2 (fun result ->
-        result.Signature.Name |> should equal "main"
-        result.Signature.Parameters |> should haveLength 0
-        result.Signature.ReturnType |> should equal "INT"
-        result.Body |> should equal (ReturnValue 2))
+    testParsing "main" 2 (function
+        | Success result ->
+            result.Signature.Name |> should equal "main"
+            result.Signature.Parameters |> should haveLength 0
+            result.Signature.ReturnType |> should equal "INT"
+            result.Body |> should equal (ReturnValue 2)
+        | Failure error ->
+            printfn "Error received:\n%s" error
+            error |> should equal "")
 
 [<Property>]
 let ``Should parse integer in return statement`` (a:int) =
     fun result -> result.Body = ReturnValue a
-    |> testParsing "main" a
+    |> testSuccessfulParsing "main" a
 
 [<Property(Arbitrary=[|typeof<functionName>|])>]
 let ``Should parse function name`` (a:string) =
-    fun result -> result.Signature.Name = a
-    |> testParsing a 2
+    fun result -> result.Signature.Name = a.Trim()
+    |> testSuccessfulParsing a 2
