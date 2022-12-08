@@ -1,4 +1,4 @@
-module Tests
+module IntegerReturnTests
 
 open System
 open System.Text.RegularExpressions
