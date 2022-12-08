@@ -13,9 +13,9 @@ open SharpSilver.Parser
 
 let generateIntegerReturn (name:string) (result:int) =
     [
-        $"{name} => INT"
-        "=============="
-        $"{name} => {result}."
+        $"{name}:= () => INT"
+        "==============>"
+        $"() => {result}."
     ]
     |> String.concat Environment.NewLine
 
@@ -36,7 +36,7 @@ let testSuccessfulParsing name result property =
 
 type functionName =
     static member Name() =
-        let regex = new Regex("^[a-z][a-z0-9]*$")
+        let regex = new Regex(@"\A[a-z][a-z0-9]*\Z")
         Arb.Default.String()
         |> Arb.filter (fun name -> 
             not(String.IsNullOrEmpty(name)) &&

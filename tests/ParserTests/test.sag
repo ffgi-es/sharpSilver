@@ -1,0 +1,50 @@
+main:= () => INT
+==============>
+() => 2.
+
+
+main: params = [STRING] => INT
+=====================>
+  foo: a, b --> a, b => a :+ b;
+===
+_ => foo: 1 2.
+
+foo: X Y = INT => INT => INT
+---------------------->
+|_ => (|3 => 0)
+|0 => (|0 => 0 | _ => 1)
+|X =>
+  (|1 => X
+   |Y => X :+ Y).
+// OR
+|_, 3 => 0
+|0, 0 => 0
+|0, _ => 1
+|X, 1 => x
+|X, Y => X :+ Y.
+
+// after partial applying 'foo 3'
+foo3: Y = INT => INT
+---------------->
+|3 => 0
+|1 => 3
+|Y => 3 :+ Y.
+
+// after partial applying 'foo 0'
+foo0: Y = INT => INT
+-->
+|3 => 0
+|0 => 0
+|_ => 1
+
+// dynamic partial applying won't be able to
+// just cut out the unnecessary pattern matching paths
+
+top_nested: x y = INT => INT => INT
+----------------------------->
+    a <-- x :+ y;
+    nested: b --> b => b :+ 3;
+------------------
+_, y => (nested: a) :* (nested: y).
+
+one_line:XYZ=INT=>INT=>INT===>X,Y=>X.
