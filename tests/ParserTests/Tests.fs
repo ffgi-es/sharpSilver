@@ -36,7 +36,7 @@ let testSuccessfulParsing name result property =
 
 type functionName =
     static member Name() =
-        let regex = new Regex(@"\A[a-z][a-z0-9]*\Z")
+        let regex = new Regex(@"\A[a-z][a-z0-9]*\Z$")
         Arb.Default.String()
         |> Arb.filter (fun name -> 
             not(String.IsNullOrEmpty(name)) &&
