@@ -5,7 +5,7 @@ open FParsec
 open AST
 
 type PResult = 
-    | Success of Function
+    | Success of Program
     | Failure of string
 
 let skipWhiteSpace = skipMany (satisfy System.Char.IsWhiteSpace)
@@ -17,7 +17,7 @@ let parseUnit = pstring "()" .>> skipWhiteSpace
 let parseName = regex "[a-z0-9]+"
 let parseReturn = pstring "=>" .>> skipWhiteSpace
 let parseTypeName = regex "[A-z]+" .>> skipWhiteSpace
-let parseFunctionLine = regex "={2,}>" .>> skipWhiteSpace
+let parseFunctionLine = regex @"[=\-]{2,}>" .>> skipWhiteSpace
 let parseInt = pint64 .>> skipWhiteSpace
 
 let parseType = [parseTypeName; parseUnit] |> choice
@@ -48,8 +48,12 @@ let parseFunction =
         parseBody
         (fun signature expr -> {Signature=signature; Body=expr})
 
+let parseProgram =
+    parseFunction
+    |>> (fun func -> {EntryPoint=func; Functions= dict []})
+
 let parseFromString source =
-    runParserOnString parseFunction () "function definition" source
+    runParserOnString parseProgram () "function definition" source
     |> function
         | ParserResult.Success (result, _, _) -> Success result
         | ParserResult.Failure (error, _, _) -> Failure error

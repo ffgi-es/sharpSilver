@@ -1,4 +1,5 @@
 module SharpSilver.AST
+open System.Collections.Generic
 
 type Parameter = {Type: string; Name: string}
 
@@ -8,3 +9,5 @@ type Expression =
     | ReturnValue of int64
 
 type Function = {Signature: FunctionSignature; Body: Expression}
+
+type Program = {EntryPoint: Function; Functions: IDictionary<string, Function>}

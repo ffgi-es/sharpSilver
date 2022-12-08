@@ -46,20 +46,20 @@ type functionName =
 let ``Can parse a string`` () =
     testParsing "main" 2 (function
         | Success result ->
-            result.Signature.Name |> should equal "main"
-            result.Signature.Parameters |> should haveLength 0
-            result.Signature.ReturnType |> should equal "INT"
-            result.Body |> should equal (ReturnValue 2)
+            result.EntryPoint.Signature.Name |> should equal "main"
+            result.EntryPoint.Signature.Parameters |> should haveLength 0
+            result.EntryPoint.Signature.ReturnType |> should equal "INT"
+            result.EntryPoint.Body |> should equal (ReturnValue 2)
         | Failure error ->
             printfn "Error received:\n%s" error
             error |> should equal "")
 
 [<Property>]
 let ``Should parse integer in return statement`` (a:int) =
-    fun result -> result.Body = ReturnValue a
+    fun result -> result.EntryPoint.Body = ReturnValue a
     |> testSuccessfulParsing "main" a
 
 [<Property(Arbitrary=[|typeof<functionName>|])>]
 let ``Should parse function name`` (a:string) =
-    fun result -> result.Signature.Name = a.Trim()
+    fun result -> result.EntryPoint.Signature.Name = a.Trim()
     |> testSuccessfulParsing a 2
