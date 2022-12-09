@@ -8,56 +8,52 @@ type PResult =
     | Success of Program
     | Failure of string
 
-let skipWhiteSpace = skipMany (satisfy System.Char.IsWhiteSpace)
-
-let (.>->.) a b = a .>> skipWhiteSpace .>>. b
-let (.>->) a b = a .>> skipWhiteSpace .>> b
-let (>->.) a b = a .>> skipWhiteSpace >>. b
+let (.>->.) a b = a .>> spaces .>>. b
+let (.>->) a b = a .>> spaces .>> b
+let (>->.) a b = a .>> spaces >>. b
 
 type Unit = Unit
 
-let parseEquate = pchar '=' .>> skipWhiteSpace
-let parseUnit = pstring "()" .>> skipWhiteSpace
+let parseEquate = pchar '='
+let parseUnit = pstring "()"
 let parseName = regex "[a-z0-9]+"
-let parseReturn = pstring "=>" .>> skipWhiteSpace
-let parseTypeName = regex "[A-z]+" .>> skipWhiteSpace
-let parseFunctionLine = regex @"-{2,}>" .>> skipWhiteSpace
-let parseEntryFunctionLine = regex @"={2,}>" .>> skipWhiteSpace
-let parseInt = pint64 .>> skipWhiteSpace
+let parseReturn = pstring "=>"
+let parseTypeName = regex "[A-z]+"
+let parseFunctionLine = regex @"-{2,}>"
+let parseEntryFunctionLine = regex @"={2,}>"
+let parseInt = pint64
 let parseFunctionEnd = pchar '.'
 
 let parseType = [parseTypeName; parseUnit] |> choice
 
-let parseFunctionName = parseName .>> pchar ':' .>> skipWhiteSpace
-let parseFunctionReference = pchar ':' >>. parseName .>> skipWhiteSpace
+let parseFunctionName = parseName .>> pchar ':'
+let parseFunctionReference = pchar ':' >>. parseName
 
-let parseFunctionTypes =
-    many1 (parseType .>>? parseReturn) .>>. parseType
+let (.>->?) a b = a .>>? spaces .>>? b
 
 let parseFunctionDeclaration = parseFunctionName .>> parseEquate
 
-let parseFunctionSignature lineParser =
-    pipe2
-        parseFunctionDeclaration
-        parseFunctionTypes
-        (fun name (_, returnType) -> {Name=name; ReturnType=returnType; Parameters=[]})
-    .>> lineParser
-    .>> skipWhiteSpace
+let parseFunctionTypes =
+    many1 (spaces >>. parseType .>->? parseReturn) .>->. parseType
+
+let parseFunctionSignature =
+    parseFunctionDeclaration .>->. parseFunctionTypes
+    |>> fun (name, (_, returnType)) -> {Name=name; ReturnType=returnType; Parameters=[]}
 
 let parseIntReturn = parseInt |>> ReturnValue
 let parseFunctionCall = parseFunctionReference |>> FunctionCall
 
 let parseExpression = parseIntReturn <|> parseFunctionCall
 
-let parseBody = parseUnit .>> parseReturn >>. parseExpression
+let parseBody = parseUnit .>-> parseReturn >->. parseExpression
 
 let parseFunction lineParser = 
-    skipWhiteSpace >>.
-    pipe2
-        (parseFunctionSignature lineParser)
-        parseBody
-        (fun signature expr -> {Signature=signature; Body=expr})
-    .>> parseFunctionEnd
+    spaces >>.
+    parseFunctionSignature .>->
+    lineParser .>->.
+    parseBody .>>
+    parseFunctionEnd
+    |>> fun (sign, expr) -> {Signature=sign; Body=expr}
 
 let parseProgram =
     pipe2
