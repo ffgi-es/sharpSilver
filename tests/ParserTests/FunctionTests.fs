@@ -56,3 +56,11 @@ let ``Should parse function call`` () =
             result.Functions.["other"].Signature.Name |> should equal "other"
             result.Functions.["other"].Body |> should equal (ReturnValue 3)
         | Failure error -> error |> should equal "")
+
+[<Property(Arbitrary=[|typeof<functionName>|])>]
+let ``Should parse function name and call`` funcName =
+    (fun result ->
+        result.EntryPoint.Body = FunctionCall funcName &&
+        result.Functions.Keys.Contains(funcName) &&
+        result.Functions.[funcName].Signature.Name = funcName)
+    |> testSuccessfulParsing funcName 3
