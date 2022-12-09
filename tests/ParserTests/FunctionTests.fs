@@ -48,5 +48,7 @@ type functionName =
 [<Fact>]
 let ``Should parse function call`` () =
     testParsing "other" 3 (function
-        | Success result -> Assert.True(true)
+        | Success result ->
+            result.EntryPoint.Signature.Name |> should equal "main"
+            result.Functions |> should haveCount 1
         | Failure error -> error |> should equal "")

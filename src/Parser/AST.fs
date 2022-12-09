@@ -7,6 +7,7 @@ type FunctionSignature = {Name: string; Parameters: Parameter list; ReturnType: 
 
 type Expression = 
     | ReturnValue of int64
+    | FunctionCall of string
 
 type Function = {Signature: FunctionSignature; Body: Expression}
 
