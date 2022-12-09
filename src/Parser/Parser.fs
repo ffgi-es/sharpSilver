@@ -45,7 +45,7 @@ let parseFunctionSignature lineParser =
     .>> skipWhiteSpace
 
 let parseIntReturn = parseInt |>> ReturnValue
-let parseFunctionCall = parseFunctionReference >>% ReturnValue 0
+let parseFunctionCall = parseFunctionReference >>% FunctionCall "other"
 
 let parseExpression = parseIntReturn <|> parseFunctionCall
 
@@ -67,7 +67,7 @@ let parseProgram =
             {
                 EntryPoint = func
                 Functions =
-                    List.map (fun f -> (f.Signature.Name, f)) funcs
+                    List.map (fun f -> ("other", f)) funcs
                     |> dict
             }
         )

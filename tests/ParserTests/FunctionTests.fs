@@ -50,5 +50,9 @@ let ``Should parse function call`` () =
     testParsing "other" 3 (function
         | Success result ->
             result.EntryPoint.Signature.Name |> should equal "main"
+            result.EntryPoint.Body |> should equal (FunctionCall "other")
             result.Functions |> should haveCount 1
+            result.Functions.Keys |> should contain "other"
+            result.Functions.["other"].Signature.Name |> should equal "other"
+            result.Functions.["other"].Body |> should equal (ReturnValue 3)
         | Failure error -> error |> should equal "")
