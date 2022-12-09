@@ -5,6 +5,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="SharedUtilities.fs" />
     <Compile Include="IntegerReturnTests.fs" />
     <Compile Include="FunctionTests.fs" />
     <Compile Include="Program.fs" />
