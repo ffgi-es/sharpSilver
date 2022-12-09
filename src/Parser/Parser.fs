@@ -41,9 +41,15 @@ let parseFunctionSignature =
     |>> fun (name, (_, returnType)) -> {Name=name; ReturnType=returnType; Parameters=[]}
 
 let parseIntReturn = parseInt |>> ReturnValue
-let parseFunctionCall = parseFunctionReference |>> FunctionCall
+//let parseFunctionCall = parseFunctionReference |>> FunctionCall
 
-let parseExpression = parseIntReturn <|> parseFunctionCall
+let parseFunctionCall =
+    opt parseInt >->.
+    parseFunctionReference .>->
+    opt parseInt
+    |>> FunctionCall 
+
+let parseExpression = (attempt parseFunctionCall) <|> parseIntReturn
 
 let parseBody = parseUnit .>-> parseReturn >->. parseExpression
 

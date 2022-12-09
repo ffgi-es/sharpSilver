@@ -8,6 +8,7 @@
     <Compile Include="SharedUtilities.fs" />
     <Compile Include="IntegerReturnTests.fs" />
     <Compile Include="FunctionTests.fs" />
+    <Compile Include="ArithmeticTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
