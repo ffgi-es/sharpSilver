@@ -44,10 +44,10 @@ let parseIntReturn = parseInt |>> ReturnValue
 //let parseFunctionCall = parseFunctionReference |>> FunctionCall
 
 let parseFunctionCall =
-    opt parseInt >->.
-    parseFunctionReference .>->
-    opt parseInt
-    |>> FunctionCall 
+    sepEndBy parseInt spaces .>->.
+    parseFunctionReference .>->.
+    sepEndBy parseInt spaces
+    |>> fun ((i,name), j) -> FunctionCall {Function=name; Inputs= i@j } 
 
 let parseExpression = (attempt parseFunctionCall) <|> parseIntReturn
 

@@ -28,7 +28,7 @@ let ``Should parse function call`` () =
     testParsing (functionCall "other" 3) (function
         | Success result ->
             result.EntryPoint.Signature.Name |> should equal "main"
-            result.EntryPoint.Body |> should equal (FunctionCall "other")
+            result.EntryPoint.Body |> should equal (FunctionCall {Function="other"; Inputs=[]})
             result.Functions |> should haveCount 1
             result.Functions.Keys |> should contain "other"
             result.Functions.["other"].Signature.Name |> should equal "other"
@@ -38,7 +38,7 @@ let ``Should parse function call`` () =
 [<Property>]
 let ``Should parse function name and call`` (FunctionName funcName) =
     (fun result ->
-        result.EntryPoint.Body = FunctionCall funcName &&
+        result.EntryPoint.Body = FunctionCall {Function=funcName; Inputs=[]} &&
         result.Functions.Keys.Contains(funcName) &&
         result.Functions.[funcName].Signature.Name = funcName)
     |> testSuccessfulParsing (functionCall funcName 3)

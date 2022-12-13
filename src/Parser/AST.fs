@@ -5,9 +5,11 @@ type Parameter = {Type: string; Name: string}
 
 type FunctionSignature = {Name: string; Parameters: Parameter list; ReturnType: string}
 
+type FunctionCall = {Function: string; Inputs: int64 list}
+
 type Expression = 
     | ReturnValue of int64
-    | FunctionCall of string
+    | FunctionCall of FunctionCall
 
 type Function = {Signature: FunctionSignature; Body: Expression}
 
