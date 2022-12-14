@@ -41,7 +41,6 @@ let parseFunctionSignature =
     |>> fun (name, (_, returnType)) -> {Name=name; ReturnType=returnType; Parameters=[]}
 
 let parseIntReturn = parseInt |>> ReturnValue
-//let parseFunctionCall = parseFunctionReference |>> FunctionCall
 
 let parseFunctionCall =
     sepEndBy parseInt spaces .>->.

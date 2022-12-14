@@ -40,6 +40,8 @@ foo0: Y = INT => INT
 // dynamic partial applying won't be able to
 // just cut out the unnecessary pattern matching paths
 
+find_first: list filter = ! => ! => INT
+
 top_nested: x y = INT => INT => INT
 ----------------------------->
     a <-- x :+ y;
