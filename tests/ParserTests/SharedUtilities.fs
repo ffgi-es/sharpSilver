@@ -7,6 +7,8 @@ open FsCheck.Xunit
 
 open SharpSilver.Parser
 
+let (.=.) left right = left = right |@ sprintf "%A\nshould equal---------------\n%A" left right
+
 type FunctionName = FunctionName of string with
     static member op_Explicit(FunctionName name) = name
 

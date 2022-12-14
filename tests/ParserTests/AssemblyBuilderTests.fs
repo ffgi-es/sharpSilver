@@ -2,18 +2,20 @@ module AssemblyBuilderTests
 
 open System
 open Xunit
+open FsCheck.Xunit
 open FsUnit.Xunit
 
 open SharpSilver.AST
 open SharpSilver.AssemblyWriter
 
+open SharedUtilities
 
-let simpleReturnProgramAssembly =
+let simpleReturnProgramAssembly (name:string) (exit:int) =
     [
         "SECTION .text"
         ""
-        "_main:"
-        "   mov rdi, 3"
+        $"_{name}:"
+        $"   mov rdi, {exit}"
         "   mov rax, 60 ;sys_exit"
         "   syscall"
     ]
@@ -29,4 +31,16 @@ let ``Should build simple return program`` () =
         Functions = dict []
     }
     |> buildAssembly
-    |> should equal simpleReturnProgramAssembly
+    |> should equal (simpleReturnProgramAssembly "main" 3)
+
+[<Property>]
+let ``Should map funciton name and return value`` (FunctionName name) (exit:int) =
+    {
+        EntryPoint = {
+            Signature = {Name=name; Parameters=[]; ReturnType="INT"}
+            Body = ReturnValue exit 
+        }
+        Functions = dict []
+    }
+    |> buildAssembly
+    |> fun result -> result .=. simpleReturnProgramAssembly name exit
