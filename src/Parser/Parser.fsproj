@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="AST.fs" />
     <Compile Include="Parser.fs" />
+    <Compile Include="AssemblyWriter.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="fparsec" Version="1.1.1" />
