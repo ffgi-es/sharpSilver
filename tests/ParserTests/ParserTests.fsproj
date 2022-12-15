@@ -1,15 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="SharedUtilities.fs" />
     <Compile Include="IntegerReturnTests.fs" />
     <Compile Include="FunctionTests.fs" />
     <Compile Include="ArithmeticTests.fs" />
-    <Compile Include="AssemblyBuilderTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -29,5 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Parser\Parser.fsproj" />
+    <ProjectReference Include="..\..\src\AST\AST.fsproj" />
+    <ProjectReference Include="..\SharedUtilities\SharedUtilities.fsproj" />
   </ItemGroup>
 </Project>
