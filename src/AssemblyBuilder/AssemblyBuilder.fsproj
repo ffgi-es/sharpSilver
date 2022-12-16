@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AssemblyWriter.fs" />
+    <Compile Include="AssemblyBuilder.fs" />
   </ItemGroup>
 
   <ItemGroup>
