@@ -19,12 +19,16 @@ let buildAssembly program =
     | FunctionCall {Function=name; Inputs=inputs} ->
         let a = inputs.[0]
         let b = inputs.[1]
+        let operation = name |> function
+            | "+" -> "add"
+            | "-" -> "sub"
+            | _ -> "ARG"
         [
             sprintf "SECTION .text"
             sprintf ""
             sprintf "_%s:" program.EntryPoint.Signature.Name
             sprintf "    mov rax, %d" a
-            sprintf "    add rax, %d" b
+            sprintf "    %s rax, %d" operation b
             sprintf "    mov rdi, rax"
             sprintf "    mov rax, 60 ;sys_exit"
             sprintf "    syscall"

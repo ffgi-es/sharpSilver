@@ -69,3 +69,28 @@ let ``Should map addition expression`` (FunctionName name) (a:int) (b:int) =
     }
     |> buildAssembly
     |> fun result -> result .=. simpleAdditionProgram name a b
+
+let simpleSubtractionProgram (name:string) (a:int) (b:int) =
+    [
+        sprintf "SECTION .text"
+        sprintf ""
+        sprintf "_%s:" name
+        sprintf "    mov rax, %d" a
+        sprintf "    sub rax, %d" b
+        sprintf "    mov rdi, rax"
+        sprintf "    mov rax, 60 ;sys_exit"
+        sprintf "    syscall"
+    ]
+    |> String.concat Environment.NewLine
+
+[<Property>]
+let ``Should map subtraction expression`` (FunctionName name) (a:int) (b:int) =
+    {
+        EntryPoint = {
+            Signature = {Name=name; Parameters=[]; ReturnType="INT"}
+            Body = FunctionCall {Function="-"; Inputs=[a;b]} 
+        }
+        Functions = dict []
+    }
+    |> buildAssembly
+    |> fun result -> result .=. simpleSubtractionProgram name a b
