@@ -17,6 +17,7 @@ type Unit = Unit
 let parseEquate = pchar '='
 let parseUnit = pstring "()"
 let parseName = regex "[a-z0-9]+"
+let parseOperator = regex "[+]"
 let parseReturn = pstring "=>"
 let parseTypeName = regex "[A-z]+"
 let parseFunctionLine = regex @"-{2,}>"
@@ -27,7 +28,7 @@ let parseFunctionEnd = pchar '.'
 let parseType = [parseTypeName; parseUnit] |> choice
 
 let parseFunctionName = parseName .>> pchar ':'
-let parseFunctionReference = pchar ':' >>. parseName
+let parseFunctionReference = pchar ':' >>. (parseName <|> parseOperator)
 
 let (.>->?) a b = a .>>? spaces .>>? b
 

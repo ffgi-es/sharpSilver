@@ -2,6 +2,7 @@ module SharedUtilities
 
 open System
 open System.Text.RegularExpressions
+open Fare
 open FsCheck
 open FsCheck.Xunit
 
@@ -9,8 +10,18 @@ open SharpSilver.Parser
 
 let (.=.) left right = left = right |@ sprintf "%A\nshould equal---------------\n%A" left right
 
+let matching pattern =
+    Gen.sized (fun size ->
+        let xeger = Xeger pattern
+        let count = if size < 1 then 1 else size
+        [ for i in 1..count -> xeger.Generate()]
+        |> Gen.elements
+        |> Gen.resize count)
+
 type FunctionName = FunctionName of string with
-    static member op_Explicit(FunctionName name) = name
+    override this.ToString() =
+        match this with
+        | FunctionName name -> name
 
 let functionNameRegex = new Regex(@"\A[a-z][a-z0-9]*\z")
 

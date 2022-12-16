@@ -1,4 +1,4 @@
-module SharpSilver.AssemblyWriter
+module SharpSilver.AssemblyBuilder
 
 open System
 
@@ -16,4 +16,17 @@ let buildAssembly program =
             "   syscall"
         ]
         |> String.concat Environment.NewLine
-    | _ -> ""
+    | FunctionCall {Function=name; Inputs=inputs} ->
+        let a = inputs.[0]
+        let b = inputs.[1]
+        [
+            "SECTION .text"
+            ""
+            $"_{program.EntryPoint.Signature.Name}:"
+            $"   mov rax, {a}"
+            $"   add rax, {b}"
+            $"   mov rdi, rax"
+            "   mov rax, 60 ;sys_exit"
+            "   syscall"
+        ]
+        |> String.concat Environment.NewLine

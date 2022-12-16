@@ -11,15 +11,15 @@ open SharpSilver.Parser
 
 open SharedUtilities
 
-let functionCall (funcName:string) (input1:int) (input2:int) =
+let add (input1:int) (input2:int) =
     [
         $"main:= () => INT"
         "=================>"
-        $"() => {input1} :{funcName} {input2}."
+        $"() => {input1} :+ {input2}."
     ]
     |> String.concat Environment.NewLine
 
-let functionCallString (call:string) =
+let functionCall2String (call:string) =
     [
         $"main:= () => INT"
         "=================>"
@@ -28,28 +28,28 @@ let functionCallString (call:string) =
     |> String.concat Environment.NewLine
 
 [<Fact>]
-let ``Should parse a function call with arguments`` () =
+let ``Should parse an addition expression`` () =
     testParsing
-        (functionCall "add" 2 3)
+        (add 2 3)
         (function
         | Success result ->
-            result.EntryPoint.Body |> should equal (FunctionCall {Function="add"; Inputs=[2; 3]})
+            result.EntryPoint.Body |> should equal (FunctionCall {Function="+"; Inputs=[2; 3]})
         | Failure error -> error |> should equal "")
 
 [<Property>]
-let ``Should parse function call with correct arguments`` (FunctionName fname) (input1:int) (input2:int) =
+let ``Should parse addition correct arguments`` (input1:int) (input2:int) =
     testSuccessfulParsing
-        (functionCall fname input1 input2)
-        (fun result -> result.EntryPoint.Body = (FunctionCall {Function=fname; Inputs=[input1; input2]}))
+        (add input1 input2)
+        (fun result -> result.EntryPoint.Body = (FunctionCall {Function="+"; Inputs=[input1; input2]}))
 
 [<Theory>]
-[<InlineData("4 :add 5")>]
-[<InlineData(":add 4 5")>]
-[<InlineData("4 5 :add")>]
+[<InlineData("4 :+ 5")>]
+[<InlineData(":+ 4 5")>]
+[<InlineData("4 5 :+")>]
 let ``Should parse arguments regardless of function position`` (call:string) =
     function
     | Success result ->
-        result.EntryPoint.Body |> should equal (FunctionCall {Function="add"; Inputs=[4; 5]})
+        result.EntryPoint.Body |> should equal (FunctionCall {Function="+"; Inputs=[4; 5]})
     | Failure error -> error |> should equal ""
     |> testParsing
-        (functionCallString call)
+        (functionCall2String call)

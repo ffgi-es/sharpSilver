@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="fare" Version="2.2.1" />
     <PackageReference Include="fscheck.xunit" Version="2.16.5" />
   </ItemGroup>
 
