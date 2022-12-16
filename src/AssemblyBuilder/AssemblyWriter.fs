@@ -8,25 +8,25 @@ let buildAssembly program =
     match program.EntryPoint.Body with
     | ReturnValue value ->
         [
-            "SECTION .text"
-            ""
-            $"_{program.EntryPoint.Signature.Name}:"
-            $"   mov rdi, {value}"
-            "   mov rax, 60 ;sys_exit"
-            "   syscall"
+            sprintf "SECTION .text"
+            sprintf ""
+            sprintf "_%s:" program.EntryPoint.Signature.Name
+            sprintf "    mov rdi, %d" value
+            sprintf "    mov rax, 60 ;sys_exit"
+            sprintf "    syscall"
         ]
         |> String.concat Environment.NewLine
     | FunctionCall {Function=name; Inputs=inputs} ->
         let a = inputs.[0]
         let b = inputs.[1]
         [
-            "SECTION .text"
-            ""
-            $"_{program.EntryPoint.Signature.Name}:"
-            $"   mov rax, {a}"
-            $"   add rax, {b}"
-            $"   mov rdi, rax"
-            "   mov rax, 60 ;sys_exit"
-            "   syscall"
+            sprintf "SECTION .text"
+            sprintf ""
+            sprintf "_%s:" program.EntryPoint.Signature.Name
+            sprintf "    mov rax, %d" a
+            sprintf "    add rax, %d" b
+            sprintf "    mov rdi, rax"
+            sprintf "    mov rax, 60 ;sys_exit"
+            sprintf "    syscall"
         ]
         |> String.concat Environment.NewLine

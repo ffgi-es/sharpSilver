@@ -13,17 +13,17 @@ open SharedUtilities
 
 let add (input1:int) (input2:int) =
     [
-        $"main:= () => INT"
-        "=================>"
-        $"() => {input1} :+ {input2}."
+        sprintf "main:= () => INT"
+        sprintf "===============>"
+        sprintf "() => %d :+ %d." input1 input2
     ]
     |> String.concat Environment.NewLine
 
 let functionCall2String (call:string) =
     [
-        $"main:= () => INT"
-        "=================>"
-        $"() => {call}."
+        sprintf "main:= () => INT"
+        sprintf "===============>"
+        sprintf "() => %s." call
     ]
     |> String.concat Environment.NewLine
 

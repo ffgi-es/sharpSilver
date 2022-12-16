@@ -12,12 +12,12 @@ open SharedUtilities
 
 let simpleReturnProgramAssembly (name:string) (exit:int) =
     [
-        "SECTION .text"
-        ""
-        $"_{name}:"
-        $"   mov rdi, {exit}"
-        "   mov rax, 60 ;sys_exit"
-        "   syscall"
+        sprintf "SECTION .text"
+        sprintf ""
+        sprintf "_%s:" name
+        sprintf "    mov rdi, %d" exit
+        sprintf "    mov rax, 60 ;sys_exit"
+        sprintf "    syscall"
     ]
     |> String.concat Environment.NewLine
 
@@ -47,14 +47,14 @@ let ``Should map funciton name and return value`` (FunctionName name) (exit:int)
 
 let simpleAdditionProgram (name:string) (a:int) (b:int) =
     [
-        "SECTION .text"
-        ""
-        $"_{name}:"
-        $"   mov rax, {a}"
-        $"   add rax, {b}"
-        $"   mov rdi, rax"
-        "   mov rax, 60 ;sys_exit"
-        "   syscall"
+        sprintf "SECTION .text"
+        sprintf ""
+        sprintf "_%s:" name
+        sprintf "    mov rax, %d" a
+        sprintf "    add rax, %d" b
+        sprintf "    mov rdi, rax"
+        sprintf "    mov rax, 60 ;sys_exit"
+        sprintf "    syscall"
     ]
     |> String.concat Environment.NewLine
 
