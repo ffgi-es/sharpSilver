@@ -79,3 +79,9 @@ let parseFromString source =
     |> function
         | ParserResult.Success (result, _, _) -> Success result
         | ParserResult.Failure (error, _, _) -> Failure error
+
+let parseFromFile source =
+    runParserOnFile parseProgram () source System.Text.Encoding.UTF8
+    |> function
+        | ParserResult.Success (result, _, _) -> Success result
+        | ParserResult.Failure (error, _, _) -> Failure error
