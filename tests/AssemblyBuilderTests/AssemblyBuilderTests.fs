@@ -34,7 +34,7 @@ let ``Should build simple return program`` () =
     |> should equal (simpleReturnProgramAssembly "main" 3)
 
 [<Property>]
-let ``Should map funciton name and return value`` (FunctionName name) (exit:int) =
+let ``Should map function name and return value`` (FunctionName name) (exit:int) =
     {
         EntryPoint = {
             Signature = {Name=name; Parameters=[]; ReturnType="INT"}
