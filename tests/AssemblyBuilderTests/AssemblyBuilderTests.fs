@@ -94,3 +94,30 @@ let ``Should map subtraction expression`` (FunctionName name) (a:int) (b:int) =
     }
     |> buildAssembly
     |> fun result -> result .=. simpleSubtractionProgram name a b
+
+let simpleDivisionProgram (a:int) (b:int) =
+    [
+        sprintf "SECTION .text"
+        sprintf ""
+        sprintf "_main:"
+        sprintf "    mov rax, %d" a
+        sprintf "    mov rdi, %d" b
+        sprintf "    xor rdx, rdx"
+        sprintf "    idiv rdi"
+        sprintf "    mov rdi, rax"
+        sprintf "    mov rax, 60 ;sys_exit"
+        sprintf "    syscall"
+    ]
+    |> String.concat Environment.NewLine
+
+[<Property>]
+let ``Should map division expression`` (a:int) (b:int) =
+    {
+        EntryPoint = {
+            Signature = {Name="main"; Parameters=[]; ReturnType="INT"}
+            Body = FunctionCall {Function="/"; Inputs=[a;b]} 
+        }
+        Functions = dict []
+    }
+    |> buildAssembly
+    |> fun result -> result .=. simpleDivisionProgram a b
