@@ -4,6 +4,23 @@ open System
 
 open SharpSilver.AST
 
+module Assembly =
+    type Builder() =
+        member _.Yield(_) = []
+        [<CustomOperation("mov")>]
+        member _.Mov(l, a, b) =
+            l @ [sprintf "    mov %A, %A" a b]
+
+        //member _.Run(l) = String.concat Environment.NewLine l
+
+let assemblyBuilder = new Assembly.Builder()
+
+let comp = assemblyBuilder {
+    mov "rax" 1
+    mov "rdx" 2
+    mov "rdi" 3
+}
+
 let AddSumCode name operation a b =
     [
         sprintf "SECTION .text"
