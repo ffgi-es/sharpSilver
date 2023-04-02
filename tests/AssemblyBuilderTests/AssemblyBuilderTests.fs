@@ -115,3 +115,28 @@ _main:
 [<Property>]
 let ``Should map division expression`` (a:int) (b:int) =
     simpleDivisionProgram a b |> buildAndCompare
+
+let simpleMultiplicationProgram (a:int) (b:int) =
+    (
+        {
+            EntryPoint = {
+                Signature = { Name="main"; Parameters=[]; ReturnType="INT" }
+                Body = FunctionCall { Function="*"; Inputs=[a;b] }
+            }
+            Functions = dict []
+        },
+        $"""
+SECTION .text
+
+_main:
+    mov rax, {a}
+    imul rax, {b}
+    mov rdi, rax
+    mov rax, 60 ;sys_exit
+    syscall
+""".Trim()
+    )
+
+[<Property>]
+let ``Should map multiplication expression`` (a:int) (b:int) =
+    simpleMultiplicationProgram a b |> buildAndCompare

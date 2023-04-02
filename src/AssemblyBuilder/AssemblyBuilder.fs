@@ -103,5 +103,6 @@ let buildAssembly program =
         match name with
         | "+" -> AddSumCode program.EntryPoint.Signature.Name "add" a b
         | "-" -> AddSumCode program.EntryPoint.Signature.Name "sub" a b
+        | "*" -> AddSumCode program.EntryPoint.Signature.Name "imul" a b
         | "/" -> DivCode program.EntryPoint.Signature.Name a b
         | _ -> "ARG"
