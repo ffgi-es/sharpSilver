@@ -8,7 +8,22 @@ open FsCheck.Xunit
 
 open SharpSilver.Parser
 
-let (.=.) left right = left = right |@ sprintf "%A\nshould equal---------------\n%A" left right
+let positiveChar c1 =
+    if Char.IsWhiteSpace(c1)
+    then if c1 = ' ' then '·' else c1
+    else '-'
+
+let DiffStrings (s1 : string) (s2 : string) =
+   let s1', s2' = s1.PadRight(s2.Length), s2.PadRight(s1.Length)
+
+   let d1, d2 =
+      (s1', s2')
+      ||> Seq.zip
+      |> Seq.map (fun (c1, c2) -> if c1 = c2 then (positiveChar c1),(positiveChar c2) else c1, c2)
+      |> Seq.fold (fun (d1, d2) (c1, c2) -> (sprintf "%s%c" d1 c1), (sprintf "%s%c" d2 c2) ) ("","")
+   sprintf "A:\n%s\nB:\n%s" d1 d2
+
+let (.=.) left right = left = right |@ (sprintf "\n%A\nshould equal---------------\n%A\ndiff:\n%s" left right (DiffStrings $"{left}" $"{right}"))
 
 let matching pattern =
     Gen.sized (fun size ->
