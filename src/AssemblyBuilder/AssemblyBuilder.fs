@@ -16,7 +16,11 @@ module Assembly =
 
         [<CustomOperation("SECTION")>]
         member _.Section(l, name) =
-            l @ [sprintf "SECTION %s%s" name Environment.NewLine]
+            l @ [sprintf "SECTION %s" name]
+        
+        [<CustomOperation("globaldef")>]
+        member _.Global(l, name) =
+            l @ [sprintf "global _%s%s" name Environment.NewLine]
 
         [<CustomOperation("mov")>]
         member _.Mov(l, a, b) =
@@ -63,6 +67,7 @@ let comp = assemblyBuilder {
 let AddSumCode name operation a b =
     assemblyBuilder {
         SECTION ".text"
+        globaldef name
 
         label name
         mov rax a
@@ -75,6 +80,7 @@ let AddSumCode name operation a b =
 let DivCode name a b =
     assemblyBuilder {
         SECTION ".text"
+        globaldef name
 
         label name
         mov rax a
@@ -91,6 +97,7 @@ let buildAssembly program =
     | ReturnValue value ->
         assemblyBuilder {
             SECTION ".text"
+            globaldef program.EntryPoint.Signature.Name
 
             label program.EntryPoint.Signature.Name
             mov rdi value

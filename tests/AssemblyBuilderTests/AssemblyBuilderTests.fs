@@ -23,6 +23,7 @@ let simpleReturnProgramAssembly (name:string) (exit:int) =
         },
         $"""
 SECTION .text
+global _{name}
 
 _{name}:
     mov rdi, {exit}
@@ -50,6 +51,7 @@ let simpleAdditionProgram (name:string) (a:int) (b:int) =
         },
         $"""
 SECTION .text
+global _{name}
 
 _{name}:
     mov rax, {a}
@@ -75,6 +77,7 @@ let simpleSubtractionProgram (name:string) (a:int) (b:int) =
         },
         $"""
 SECTION .text
+global _{name}
 
 _{name}:
     mov rax, {a}
@@ -100,6 +103,7 @@ let simpleDivisionProgram (a:int) (b:int) =
         },
         $"""
 SECTION .text
+global _main
 
 _main:
     mov rax, {a}
@@ -127,6 +131,7 @@ let simpleMultiplicationProgram (a:int) (b:int) =
         },
         $"""
 SECTION .text
+global _main
 
 _main:
     mov rax, {a}
